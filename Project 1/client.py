@@ -9,7 +9,7 @@ def client():
         exit()
     
     input = open('in-proj0.txt', 'r')
-    output = open('out-proj0', 'w')
+    output = open('out-proj0.txt', 'w')
     Lines = input.readlines()
 
     # Define the port on which you want to connect to the server

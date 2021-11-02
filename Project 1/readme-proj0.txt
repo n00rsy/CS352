@@ -17,6 +17,8 @@ Then attempt the changes suggested below. It will help subsequent projects if yo
     successfully. What do you see? Why? What happens when you remove the various
     sleep()s in the program?
 
+    I see the error address in use because the port is use by the server. When we remove the sleeps in the program, the output is out of order becauase the program is now asynchronous.
+
 (3) Separate the server code and client code into two different programs,
     server.py and client.py. Execute the server program first and then execute
     the client program. You should still get the same set of print messages as
