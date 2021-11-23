@@ -1,0 +1,3 @@
+kill.cs.rutgers.edu 182.48.3.2
+www.google.com 8.6.4.2
+mx.rutgers.edu 192.64.4.2
