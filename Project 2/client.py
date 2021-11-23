@@ -46,7 +46,7 @@ def client(argv):
                 continue
             
             if (tokens[2] == 'A'):
-                output.write(tokens[0] + " " + tokens[1]  + "\n")
+                output.write(data_rs  + "\n")
             elif tokens[2] == 'NS':
                 if not init:
                     tsHostName = tokens[0]
@@ -59,10 +59,7 @@ def client(argv):
 
                 # rcv data from TS 
                 data_ts = ts_socket.recv(1000).decode('utf-8')
-                if "Error" in data_ts:
-                    continue
-                else:
-                    output.write(data_ts + '\n')
+                output.write(data_ts + '\n')
             
             else:
                 print('[C]: unexpected response from server.')

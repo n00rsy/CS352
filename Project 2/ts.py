@@ -21,37 +21,44 @@ def ts(argv):
     print("[TS]: host name is {}".format(host))
     localhost_ip = (socket.gethostbyname(host))
     print("[TS]: IP address is {}".format(localhost_ip))
-    cs, addr = ss.accept()
-    print ("[TS]: Got a connection request from a client at {}".format(addr))
 
     input = open('PROJI-DNSTS.txt', 'r')
     Lines = input.readlines()
     hostnameMap = generateMap(Lines)
 
-    print('[TS]: starting main loop')
     while True:
-        hostname = cs.recv(4096)
-        print("[TS]: Recieved a host to lookup {}".format(hostname))
-        if hostname in hostnameMap:
-            print("[TS]: Found host in TS")
-            resp = hostname + ' ' + ' '.join(hostnameMap[hostname])
-            print("[TS]: Sending client {}".format(resp))
-            cs.send(resp.encode())
-        else:
-            # not in TS
-            not_found_resp = host + ' - Error:HOST NOT FOUND'
+        cs, addr = ss.accept()
+        print ("[TS]: Got a connection request from a client at {}".format(addr))
+
+        print('[TS]: starting main loop')
+        while True:
             try:
-                cs.send(not_found_resp.encode())
+                hostname = cs.recv(4096).decode('utf-8')
             except:
-                ss.close()
-                exit()
+                cs.close()
+                break
+            print("[TS]: Recieved a host to lookup {}".format(hostname))
+            if hostname in hostnameMap:
+                resp = hostname + ' ' + ' '.join(hostnameMap[hostname])
+                print("[TS]: Sending {}".format(resp))
+                cs.send(resp.encode())
+            else:
+                # not in TS
+                not_found_resp = hostname + ' - Error:HOST NOT FOUND'
+                
+                print("[TS]: Sending {}".format(not_found_resp))
+                try:
+                    cs.send(not_found_resp.encode())
+                except:
+                    cs.close()
+                    break
 
 def generateMap(Lines):
     Dict = {}
     for line in Lines:
         line = line.strip().lower()
         tokens = line.split()
-        Dict[tokens[0]] = [tokens[1], tokens[2]]
+        Dict[tokens[0]] = [tokens[1], tokens[2].upper()]
 
     return Dict
 

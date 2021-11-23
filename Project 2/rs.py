@@ -22,26 +22,37 @@ def rs(argv):
     print("[RS]: host name is {}".format(host))
     localhost_ip = (socket.gethostbyname(host))
     print("[RS]: IP address is {}".format(localhost_ip))
-    cs, addr = ss.accept()
-    print ("[RS]: Got a connection request from a client at {}".format(addr))
 
     input = open('PROJI-DNSRS.txt', 'r')
     Lines = input.readlines()
     hostnameMap = generateMap(Lines)
-    
+
     while True:
-        # recieve hostname from client
-        hostname = cs.recv(1000).decode('utf-8')
-        print ("[RS]: recieved data from client: {}".format(hostname))
+        cs, addr = ss.accept()
+        print ("[RS]: Got a connection request from a client at {}".format(addr))
+        
+        while True:
+            # recieve hostname from client
+            try:
+                hostname = cs.recv(4096).decode('utf-8')
+            except:
+                cs.close()
+                break
+            print ("[RS]: recieved host from client: {}".format(hostname))
 
-        # process hostname
-        res = hostnameMap.get(hostname, ['-', 'NS'])
-        if res[1] == 'NS':
-            hostname = tsHostname
+            # process hostname
+            res = hostnameMap.get(hostname, ['-', 'NS'])
+            if res[1] == 'NS':
+                hostname = tsHostname
 
-        print('[RS]: sending ' + (hostname + ' ' + res[0] + ' ' + res[1]))
-        # send response to client
-        cs.send((hostname + ' ' + res[0] + ' ' + res[1]).encode('utf-8'))
+            print('[RS]: sending ' + (hostname + ' ' + res[0] + ' ' + res[1]))
+            
+            # send response to client
+            try:
+                cs.send((hostname + ' ' + res[0] + ' ' + res[1]).encode('utf-8'))
+            except:
+                cs.close()
+                break
 
     # close the server socket
     print ("[RS]: Server shutting down.")
